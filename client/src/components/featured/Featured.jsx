@@ -4,7 +4,7 @@ import './Featured.scss'
 function Featured({ type }) {
     return (
         <div className="featured">
-            {type == "movies" &&
+            {type == "series" &&
                 <div className="category">
                     <span>
                     </span>

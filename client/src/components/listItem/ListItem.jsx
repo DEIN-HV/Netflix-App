@@ -1,18 +1,42 @@
 import { Add, PlayArrow, ThumbDownOutlined, ThumbUpAltOutlined } from '@material-ui/icons'
-import { useState } from 'react';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import './ListItem.scss'
 
-function ListItem({ index }) {
+function ListItem({ item, index }) {
 
     const [isHovered, setIsHovered] = useState(false);
     const trailer = "https://player.vimeo.com/video/444454073?title=0&byline=0&portrait=0"
+    const defaultImg = "https://st2.depositphotos.com/3687485/9010/v/600/depositphotos_90102796-stock-illustration-cinema-film-clapper-board-vector.jpg"
+    const [movie, setMovie] = useState(null);
+    useEffect(() => {
+        getMovieInfo();
+    }, []);
+
+    const getMovieInfo = async () => {
+        try {
+            const { data } = await axios.get("/movies/find/" + item,
+                {
+                    headers: {
+                        token: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMzRjNjkwNTRjMGM5YTQ2YmNjN2JiYiIsImlzQWRtaW4iOnRydWUsImlhdCI6MTYzMTQ0NjAwOSwiZXhwIjoxNjMxODc4MDA5fQ.ZLJQJDz8cG3xJ5Uqyr_nsEl1O2bVFf-M9YdLhr5Niy8"
+                    }
+                }
+            );
+            setMovie(data);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    if (!movie) return "loading..."
     return (
         <div className="listItem"
             style={{ left: isHovered && index * 225 - 50 }}
             onMouseEnter={() => setIsHovered(true)}
-            onmouseleave={() => setIsHovered(false)}
+            onMouseLeave={() => setIsHovered(false)}
         >
-            <img src="https://vtv1.mediacdn.vn/thumb_w/650/2021/8/3/the-suicide-squad-online-quad-1200-1627960943694265347639.jpg" alt="" />
+
+            <img src={!movie ? defaultImg : movie.img} alt="" />
 
             {isHovered && (
                 <>
@@ -25,12 +49,12 @@ function ListItem({ index }) {
                             <ThumbDownOutlined className="icon" />
                         </div>
                         <div className="itemInfoTop">
-                            <span>Suicide Squat</span>
-                            <span className="limit">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Cumque, nulla? Sequi, assumenda libero unde fugiat nisi ea veniam non nesciunt, animi consequuntur at ut aut debitis. Aut laudantium atque autem?</span>
-                            <span>2021</span>
+                            <span>{movie.title}</span>
+                            {/* <span className="limit">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Cumque, nulla? Sequi, assumenda libero unde fugiat nisi ea veniam non nesciunt, animi consequuntur at ut aut debitis. Aut laudantium atque autem?</span> */}
+                            <span>{movie.year}</span>
                         </div>
-                        <div className="desc">Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid, corporis architecto? Aliquam beatae optio unde corrupti possimus pariatur ipsum quasi nisi animi officiis rem, praesentium soluta error reprehenderit maiores eligendi?</div>
-                        <div className="genre">Action</div>
+                        <div className="desc">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
+                        <div className="genre">{movie.genre}</div>
                     </div>
                 </>)
             }
