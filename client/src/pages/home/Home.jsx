@@ -6,20 +6,19 @@ import Register from "../register/Register"
 import axios from "axios";
 import "./Home.scss"
 
-function Home({type}) {
+function Home({ type }) {
     const [lists, setLists] = useState([]);
     const [genre, setGenre] = useState(null);
 
     useEffect(() => {
-        const getRandomList = async () =>{
+        const getRandomList = async () => {
             try {
-                
-                const url=`lists${type?"?type=" + type:""}${genre?"&genre=" + genre:""}`;
-                const {data} = await axios.get(
+                const url = `lists${type ? "?type=" + type : ""}${genre ? "&genre=" + genre : ""}`;
+                const { data } = await axios.get(
                     url,
                     {
-                        headers:{
-                            token: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMzRjNjkwNTRjMGM5YTQ2YmNjN2JiYiIsImlzQWRtaW4iOnRydWUsImlhdCI6MTYzMTQyNDUzOCwiZXhwIjoxNjMxODU2NTM4fQ.bORsjVp40mBnY4ICpnoEA22CGsEtPagt4ZcFGfv7zcc"
+                        headers: {
+                            token: "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
                         }
                     }
                 )
@@ -27,18 +26,18 @@ function Home({type}) {
             } catch (error) {
                 console.log(error)
             }
-            console.log('lists',lists)
+            console.log('lists', lists)
         }
 
         getRandomList();
     }, [genre, type]);
-
+    console.log(lists)
     return (
         <div className="home">
             <Navbar />
             <Featured type={type} />
-            {lists.map((list,i)=>(
-                <List list={list} key={i}/>
+            {lists.map((list, i) => (
+                <List list={list} key={i} />
             ))}
         </div>
     )

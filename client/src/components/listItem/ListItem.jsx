@@ -1,6 +1,7 @@
 import { Add, PlayArrow, ThumbDownOutlined, ThumbUpAltOutlined } from '@material-ui/icons'
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import './ListItem.scss'
 
 function ListItem({ item, index }) {
@@ -18,7 +19,7 @@ function ListItem({ item, index }) {
             const { data } = await axios.get("/movies/find/" + item,
                 {
                     headers: {
-                        token: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMzRjNjkwNTRjMGM5YTQ2YmNjN2JiYiIsImlzQWRtaW4iOnRydWUsImlhdCI6MTYzMTQ0NjAwOSwiZXhwIjoxNjMxODc4MDA5fQ.ZLJQJDz8cG3xJ5Uqyr_nsEl1O2bVFf-M9YdLhr5Niy8"
+                        token: "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
                     }
                 }
             );
@@ -30,35 +31,37 @@ function ListItem({ item, index }) {
 
     if (!movie) return "loading..."
     return (
-        <div className="listItem"
-            style={{ left: isHovered && index * 225 - 50 }}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-        >
+        <Link to={{ pathname: "/watch", movie: { movie } }}>
+            <div className="listItem"
+                style={{ left: isHovered && index * 225 - 50 }}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+            >
 
-            <img src={!movie ? defaultImg : movie.img} alt="" />
+                <img src={!movie ? defaultImg : movie.img} alt="" />
 
-            {isHovered && (
-                <>
-                    <video src={trailer} autoPlay={true} loop />
-                    <div className="itemInfo">
-                        <div className="icons">
-                            <PlayArrow className="icon" />
-                            <Add className="icon" />
-                            <ThumbUpAltOutlined className="icon" />
-                            <ThumbDownOutlined className="icon" />
+                {isHovered && (
+                    <>
+                        <video src={trailer} autoPlay={true} loop />
+                        <div className="itemInfo">
+                            <div className="icons">
+                                <PlayArrow className="icon" />
+                                <Add className="icon" />
+                                <ThumbUpAltOutlined className="icon" />
+                                <ThumbDownOutlined className="icon" />
+                            </div>
+                            <div className="itemInfoTop">
+                                <span>{movie.title}</span>
+                                {/* <span className="limit">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Cumque, nulla? Sequi, assumenda libero unde fugiat nisi ea veniam non nesciunt, animi consequuntur at ut aut debitis. Aut laudantium atque autem?</span> */}
+                                <span>{movie.year}</span>
+                            </div>
+                            <div className="desc">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
+                            <div className="genre">{movie.genre}</div>
                         </div>
-                        <div className="itemInfoTop">
-                            <span>{movie.title}</span>
-                            {/* <span className="limit">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Cumque, nulla? Sequi, assumenda libero unde fugiat nisi ea veniam non nesciunt, animi consequuntur at ut aut debitis. Aut laudantium atque autem?</span> */}
-                            <span>{movie.year}</span>
-                        </div>
-                        <div className="desc">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
-                        <div className="genre">{movie.genre}</div>
-                    </div>
-                </>)
-            }
-        </div>
+                    </>)
+                }
+            </div>
+        </Link>
     )
 }
 

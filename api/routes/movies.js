@@ -8,15 +8,15 @@ router.post("/", verify, async (req, res) => {
     if (req.user.isAdmin) {
         const newMovie = new Movie(req.body);
         try {
-            const saveMovie = await newMovie.save();
-            res.status(201).json(saveMovie);
-        } catch (error) {
-            res.status(500).json(error);
+            const savedMovie = await newMovie.save();
+            res.status(201).json(savedMovie);
+        } catch (err) {
+            res.status(600).json(err);
         }
+    } else {
+        res.status(403).json("You are not allowed!");
     }
-    else
-        res.status(403).json("You are not allowed!")
-})
+});
 
 //UPDATE
 router.put("/:id", verify, async (req, res) => {

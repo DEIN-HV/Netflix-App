@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useRef } from "react";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -17,10 +18,19 @@ function Register() {
         setEmail(emailRef.current.value);
     };
 
-    const handleFinish = (e) => {
+    const handleFinish = async (e) => {
         e.preventDefault();
-        setUsername(usernameRef.current.value);
-        setPassword(passwordRef.current.value);
+        // setPassword(passwordRef.current.value);
+        // setUsername(usernameRef.current.value);
+        try {
+            await axios.post("auth/register", { email, username, password });
+            history.push("/login");
+        } catch (err) { }
+    };
+
+    const redirectToLogin = (e) => {
+        e.preventDefault();
+        history.push("/login");
     }
     return (
         <div className="register">
@@ -31,7 +41,7 @@ function Register() {
                         src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/2560px-Netflix_2015_logo.svg.png"
                         alt=""
                     />
-                    <button className="loginButton">Sign In</button>
+                    <button className="loginButton" onClick={redirectToLogin}>Sign In</button>
                 </div>
             </div>
             <div className="container">
@@ -49,8 +59,17 @@ function Register() {
                     </div>
                 ) : (
                     <form className="input">
-                        <input type="username" placeholder="username" ref={usernameRef} />
-                        <input type="password" placeholder="password" ref={passwordRef} />
+                        <input type="username"
+                            placeholder="username"
+                            onChange={(e) => setUsername(e.target.value)}
+                            ref={usernameRef}
+                        />
+                        <input type="password"
+                            placeholder="password"
+                            onChange={(e) => setPassword(e.target.value)}
+                            ref={passwordRef}
+                        />
+
                         <button className="registerButton" onClick={handleFinish}>
                             Start
                         </button>
